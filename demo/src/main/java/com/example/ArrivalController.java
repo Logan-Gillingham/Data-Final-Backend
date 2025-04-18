@@ -1,6 +1,7 @@
 package com.example;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
@@ -12,8 +13,13 @@ public class ArrivalController {
     private ArrivalRepository arrivalRepository;
 
     @GetMapping
-    public List<Arrival> getAllArrivals() {
-        return arrivalRepository.findAll();
+    @Transactional
+    public List<Arrival> getArrivals(@RequestParam(required = false) String airportCode) {
+        if (airportCode != null && !airportCode.isEmpty()) {
+            return arrivalRepository.findByAirport_Code(airportCode);
+        } else {
+            return arrivalRepository.findAll();
+        }
     }
 
     @GetMapping("/{id}")
